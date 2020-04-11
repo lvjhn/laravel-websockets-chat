@@ -1,8 +1,8 @@
 <template>
-    <div class="global-chat-room container">
+    <div class="public-chat-room container">
         <div class="messages">
             <div class="messages-container">
-                <h3>Global Chat Room</h3>
+                <h3>Public Chat Room ({{chatroom_id}})</h3>
                 <hr />
                 <div class="messages-list" v-chat-scroll>
                     <div v-for="message in messages" class="message-item">
@@ -40,21 +40,30 @@
 
     export default {
         props: [
-            "user"
+            "user",
+            "chatroom_id"
         ],
         data () {
             return {
                 bufferMessageText: "",
                 users: [],
                 typers: [],
-                messages: []
+                messages: [],
             }
         },
+        computed: {
+            channel () {
+                return "public-chatroom-" + this.chatroom_id;
+            }
+        },  
         methods: {
             sendMessage() {
                 let messageText = this.bufferMessageText;
                 console.log("Sending message: " + messageText)
-                axios.post("/messages/send", { message: messageText })
+                axios.post("/public_messages/send", { 
+                        chatroom_id: this.chatroom_id,
+                        message: messageText 
+                      })
                      .then(response => {
                          this.messages.push(response.data);
                      }) 
@@ -62,19 +71,18 @@
             },
             whisperTyping() {
                 console.log("Whispering typing...")
-                Echo.private('global-chatroom')
+                Echo.private(this.channel)
                     .whisper('typing', this.user)
             }
         },
         mounted() {
-            let messages = axios.get("/messages/get").then(response => {
+            let messages = axios.get("/public_messages/get/" + this.chatroom_id).then(response => {
                 this.messages = response.data;
             })
 
-            let chatroom = 'global-chatroom'
-            Echo.join(chatroom)
+            Echo.join(this.channel)
                 .here(users => {
-                    console.log("Entered chatroom: " + chatroom); 
+                    console.log("Entered chatroom: " + this.channel); 
                     console.log("Users: ");
                     console.log(users);
                     this.users = users;
@@ -92,7 +100,7 @@
                         1
                     );
                 })
-                .listen("NewMessage", data => {
+                .listen("NewPublicMessage", data => {
                     console.log("A new message was received");
                     console.log(data.message);
                     this.messages.push(data.message);
@@ -100,7 +108,7 @@
         },
         created() {
             let self = this;
-            Echo.private('global-chatroom')
+            Echo.private(this.channel)
                 .listenForWhisper('typing', user => {
                     console.log("Handled typing event ");
                     console.log("Who? " + user.id);
@@ -118,7 +126,7 @@
 </script>
 
 <style scoped lang="scss">
-    .global-chat-room {
+    .public-chat-room {
         display: flex;
     }
 

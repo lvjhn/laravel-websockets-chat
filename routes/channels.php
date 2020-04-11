@@ -21,6 +21,6 @@ Broadcast::channel('global-chatroom', function($user) {
     return $user;
 });
 
-Broadcast::channel('global-chatroom-typing', function($user) {
+Broadcast::channel('public-chatroom-{id}', function($user, $id) {
     return $user;
 });

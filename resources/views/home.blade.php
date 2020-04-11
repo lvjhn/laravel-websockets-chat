@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="row">
         <global-chat-room user='<?= json_encode(auth()->user()) ?>' />
     </div>
 </div>

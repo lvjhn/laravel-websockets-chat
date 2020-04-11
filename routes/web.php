@@ -24,7 +24,14 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/logout', 'HomeController@logout')->name('logout');
 
+Route::view('/rooms/{id}', 'room')->middleware('auth');
+
 Route::prefix('messages')->group(function(){
     Route::get('/get', 'MessageController@index');
     Route::post('/send', 'MessageController@send');
 }); 
+
+Route::prefix('public_messages')->group(function(){
+    Route::get('/get/{id}', 'PublicMessageController@get');
+    Route::post('/send', 'PublicMessageController@send');
+});

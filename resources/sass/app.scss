@@ -1,0 +1,30 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+.topbar {
+    .topbar-container {
+        padding: 20px;
+
+        .title {}
+        
+        .nav {
+            .nav-container {
+                ul {    
+                    list-style: none;
+                    margin-top: 10px;
+
+                    li {    
+                        display: inline;
+                        margin: 0 20px;
+                    }
+                }
+            }
+        }
+    }
+}
